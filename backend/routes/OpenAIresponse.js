@@ -1,7 +1,7 @@
 
 const express = require("express");
 
-const parseUnifiedPost = require("../services/openAiService.js");
+
 const { getOpenAIResponse } = require("../controllers/openAiController.js");
 
 const router = express.Router();

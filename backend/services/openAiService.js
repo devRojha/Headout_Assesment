@@ -1,5 +1,5 @@
-// unifiedPostParser.js
-import OpenAI from "openai";
+// services/openAiService.js
+const OpenAI = require("openai");
 
 /**
  * parseUnifiedPost
@@ -17,7 +17,7 @@ import OpenAI from "openai";
  */
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export async function parseUnifiedPost({ text, attachmentText = null }) {
+async function parseUnifiedPost({ text, attachmentText = null }) {
   if (!text || typeof text !== "string") {
     throw new Error("`text` (string) is required");
   }
@@ -46,9 +46,9 @@ Schemas (exact field names expected):
 
 1) Announcement (intent == "announcement")
 {
-  "department": string | null,        // e.g., "CSE", "Mechanical", etc.
+  "department": string | null,
   "message": string | null,
-  "date": string | null,              // ISO 8601 (date of posting or event date if mentioned)
+  "date": string | null,
   "resourceLink": string | null,
   "editable_preview": { "title": string|null, "short_description": string|null }
 }
@@ -57,7 +57,7 @@ Schemas (exact field names expected):
 {
   "title": string | null,
   "description": string | null,
-  "date": string | null,           // ISO 8601 (event date & time if available)
+  "date": string | null,
   "location": string | null,
   "imageUrl": string | null,
   "editable_preview": { "title": string|null, "short_description": string|null, "date_text": string|null, "location_text": string|null }
@@ -70,24 +70,25 @@ Schemas (exact field names expected):
   "location": string | null,
   "imageUrl": string | null,
   "contactInfo": string | null,
-  "dateReported": string | null,    // ISO 8601 or null
+  "dateReported": string | null,
   "editable_preview": { "title": string|null, "short_description": string|null }
 }
 
 If you cannot confidently map the input to any of the three categories, set intent to "other" and payload to null.
 `;
 
-  // The user message contains the raw text and any extracted attachment text
+  // User input
   const userPrompt = `
 User text:
 """${text}"""
 
 ${attachmentText ? `Attachment (OCR/extracted text):\n"""${attachmentText}"""` : ""}
-  
+
 Please produce the JSON now.
 `;
 
   try {
+    // Call OpenAI
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -101,19 +102,15 @@ Please produce the JSON now.
     const raw = completion.choices?.[0]?.message?.content;
     if (!raw) throw new Error("No content returned from OpenAI");
 
-    // The model should return raw JSON only. Try to parse it.
+    // Attempt to parse JSON
     let parsed;
     try {
       parsed = JSON.parse(raw);
     } catch (jsonErr) {
-      // Attempt to salvage JSON if model included backticks or explanation
-      // Try to extract the first {...} block
+      // Attempt to salvage JSON if model included extra text
       const match = raw.match(/\{[\s\S]*\}/);
-      if (match) {
-        parsed = JSON.parse(match[0]);
-      } else {
-        throw new Error("Failed to parse JSON from model output: " + raw);
-      }
+      if (match) parsed = JSON.parse(match[0]);
+      else throw new Error("Failed to parse JSON from model output: " + raw);
     }
 
     // Basic validation & normalization
@@ -123,16 +120,11 @@ Please produce the JSON now.
       payload: parsed.payload ?? null,
     };
 
-    // Convert any ISO date strings to Date objects where appropriate
+    // Convert ISO date strings to Date objects where appropriate
     const convertISO = (s) => {
-      try {
-        if (!s) return null;
-        const d = new Date(s);
-        if (isNaN(d.getTime())) return null;
-        return d;
-      } catch {
-        return null;
-      }
+      if (!s) return null;
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
     };
 
     if (result.intent === "announcement" && result.payload) {
@@ -147,8 +139,10 @@ Please produce the JSON now.
 
     return result;
   } catch (err) {
-    // Bubble up or handle logging + return safe fallback
     console.error("Error parsing unified post:", err);
     throw err;
   }
 }
+
+module.exports = { parseUnifiedPost };
+ 
