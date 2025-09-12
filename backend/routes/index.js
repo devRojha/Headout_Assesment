@@ -1,12 +1,16 @@
 
 const express = require("express");
 
+const announcementsRoutes = require("./announcementsRouts.js");
+const eventsRoutes = require("./eventsRoute.js");
+const lostAndFoundRoutes = require("./lostAndFoundRoutes.js");
+
 const router = express.Router();
 
 
-router.use("/event", require("./eventsRoutes.js"));
-router.use("/lostfound", require("./lostAndFoundRoutes.js"));
-router.use("/announcement", require("./announcementsRoutes.js"));
+router.use("/event", eventsRoutes);
+router.use("/lostfound", lostAndFoundRoutes);
+router.use("/announcement", announcementsRoutes);
 
 
 
