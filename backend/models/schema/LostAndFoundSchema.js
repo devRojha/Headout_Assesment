@@ -17,6 +17,7 @@ const LostAndFoundSchema = new mongoose.Schema({
   contactInfo: { type: String, required: true },
   
   dateReported: { type: Date, default: Date.now },
+  
 });
 
 module.exports = mongoose.model("LostAndFound", LostAndFoundSchema);
