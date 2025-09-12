@@ -1,6 +1,4 @@
-const { parseUnifiedPost } = require("../services/openAiService"); // adjust path
-
-const openAiService = require("../services/openAiService.js");
+const aiResponse = require("../services/openAiService.js");
 // Controller for handling OpenAI prompt
 const getOpenAIResponse = async (req, res) => {
     const prompt = req.body.prompt;
@@ -12,7 +10,7 @@ const getOpenAIResponse = async (req, res) => {
 
     try {
         console.log("Received prompt:", prompt);
-        const response = await openAiService.parseUnifiedPost({ text: prompt });
+        const response = await aiResponse.aiResponse(prompt);
         res.status(200).json({ response });
     } catch (error) {
         console.error("OpenAI error:", error);
