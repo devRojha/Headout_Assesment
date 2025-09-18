@@ -1,0 +1,172 @@
+Functional Requirements:
+
+1. user can create events
+2. user can create fetch all events
+3. user can create fetch individual event by event id 
+4. user can create delete and update event by event id 
+
+5. user can create post of lost and find item
+6. user can see the individual description of item
+7. user can delete the post of lost and find item
+
+8. A department can creat a Announcment
+9. A department can delete a Announcment by id
+9. A department can update a Announcment by id
+10. user can feth all announcement
+
+
+API : 
+General => /api/v1/
+
+1. Events : 
+
+POST /event/
+Request
+{
+  "title": "string",
+  "description": "string",
+  "date": "date",
+  "location": "string",
+  "createdAt": "date",
+  "imageUrl": "string",
+  "going": "number",
+  "interested": "number",
+  "notGoing": "number"
+}
+Response
+{ "_id": : "object(string)"
+  "title": "string",
+  "description": "string",
+  "date": "date",
+  "location": "string",
+  "createdAt": "date",
+  "imageUrl": "string",
+  "going": "number",
+  "interested": "number",
+  "notGoing": "number"
+}
+
+GET /event/
+Response
+{
+    [
+        { "_id": : "object(string)"
+        "title": "string",
+        "description": "string",
+        "date": "date",
+        "location": "string",
+        "createdAt": "date",
+        "imageUrl": "string",
+        "going": "number",
+        "interested": "number",
+        "notGoing": "number"
+        }
+    ]
+
+}
+
+GET /event/:id
+Response
+{
+    "_id": : "object(string)"
+    "title": "string",
+    "description": "string",
+    "date": "date",
+    "location": "string",
+    "createdAt": "date",
+    "imageUrl": "string",
+    "going": "number",
+    "interested": "number",
+    "notGoing": "number"
+}
+
+DELETE /event/:id
+Request
+{
+    "id" : "string",
+}
+Response
+{ 
+    "success": true, 
+    "message": "Event deleted successfully" 
+}
+
+PUT /event/:id
+Request
+{
+    "id" : "string",
+    "going: "number",
+    "intrested" : "number",
+    "notGoing" : "number",
+}
+
+2. Announcement : 
+
+POST /announcement/
+Request
+{
+  "department": "string",
+  "message": "string",
+  "date": "date",
+  "resourceLink": "string"
+}
+Response
+{
+  "_id": "object(string)",
+  "department": "string",
+  "message": "string",
+  "date": "date",
+  "resourceLink": "string"
+}
+
+GET /announcement/
+Response 
+{
+    [
+        {
+            "_id": "object(string)",
+            "department": "string",
+            "message": "string",
+            "date": "date",
+            "resourceLink": "string"
+        }
+    ]
+}
+
+GET /announcement/:id
+Response
+{
+  "_id": "object(string)",
+  "department": "string",
+  "message": "string",
+  "date": "date",
+  "resourceLink": "string"
+}
+
+DELETE /announcement/:id
+Response
+{ 
+    "success": true, 
+    "message": "Announcement deleted successfully" 
+}
+
+PUT /announcement/:id
+Request
+{
+  "id": "string",
+  "department": "string",
+  "message": "string",
+  "date": "date",
+  "resourceLink": "string"
+}
+Response
+{
+  "_id": "object(string)",
+  "department": "string",
+  "message": "string",
+  "date": "date",
+  "resourceLink": "string"
+}
+
+
+
